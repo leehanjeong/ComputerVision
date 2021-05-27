@@ -217,8 +217,8 @@ def process_image(frame):
     cv2.imshow('blur', blur)
 
     # canny
-    low_threshold = 60  # 60까지 조절해가며 최적 찾기
-    high_threshold = 80  # 얘도 너무 높으면 벽쪽 선도 인식함
+    low_threshold = 60 
+    high_threshold = 80  
     canny_left = cv2.Canny(np.uint8(blur), low_threshold, high_threshold)
     canny_right = canny_left.copy()
 
