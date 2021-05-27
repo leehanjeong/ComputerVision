@@ -233,7 +233,6 @@ def process_image(frame):
 #################################################################################################
     # HoughLinesP
     lines_l = cv2.HoughLinesP(left_roi, 1, math.pi / 180, 35, 2, 15)  # 인자 조절
-
     lines_r = cv2.HoughLinesP(right_roi, 1, math.pi / 180, 35, 2, 15)
 
     # process lines
