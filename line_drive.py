@@ -261,13 +261,6 @@ def process_image(frame):
         lines_l = prev_lines_l
         lines_r = prev_lines_r
 
-    # 아직도 중앙선 잡는 경우 처리
-    if (abs(lines_l[0][0][2] - prev_lines_l[0][0][2]) > 35) and (abs(lines_l[0][0][2] - prev_lines_l[0][0][2]) < 380):
-        lines_l = prev_lines_l
-    if (abs(lines_r[0][0][2] - prev_lines_r[0][0][2]) > 35) and (abs(lines_r[0][0][2] - prev_lines_r[0][0][2]) < 380):
-        lines_r = prev_lines_r
-
-
     prev_lines_l = lines_l
     prev_lines_r = lines_r
 
