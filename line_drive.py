@@ -39,7 +39,6 @@ def region_of_interest(img, vertices, color):
 
 def get_gradient(line):
     gradient = 0
-
     x1, y1, x2, y2 = line[0]
 
     if (x1 != x2):  # zero division
