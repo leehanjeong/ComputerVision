@@ -344,6 +344,19 @@ def process_image(frame):
 
     return (lpos, rpos), src
 
+def steer_at_straight(img, midpos):
+
+    if (midpos > 320):
+        steer_angle = -5
+        cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+    elif (midpos < 270):
+        steer_angle = 5
+        cv2.putText(img, "turn left slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+    else:
+        steer_angle = 0
+        cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+   
+    return steer_angle
 
 def get_steer_angle(img, pos):
     global left_grad, right_grad, steer_angle
@@ -351,62 +364,31 @@ def get_steer_angle(img, pos):
     lpos = pos[0]
     rpos = pos[1]
     midpos = (lpos[0] + rpos[0]) / 2
+    #print(midpos)
 
-    # 1. 기울기
+    # 1. 기울기로 조향
     if (left_grad <= -0.65) and (right_grad >= 0.65):
-        #  2. 거리로 직진 보완
-        if (midpos > 320):
-            steer_angle = -5
-            cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-        elif (midpos < 270):
-            steer_angle = 5
-            cv2.putText(img, "turn left slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-        else:
-            steer_angle = 0
-            cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-
+	# 2. 직진의 경우 거리로 보완
+	steer_angle = steer_at_straight(img, midpos)
     elif left_grad > 0:  # left를 잃음
         if right_grad >= 0.65:
-            #  2. 거리로 직진 보완
-            if (midpos > 320):
-                steer_angle = -5
-                cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-            elif (midpos < 270):
-                steer_angle = 5
-                cv2.putText(img, "turn left slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-            else:
-                steer_angle = 0
-                cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+	    steer_angle = steer_at_straight(img, midpos)
         else:
-            steer_angle = 4000 / 23 * right_grad * right_grad - 8200 / 23 * right_grad + 3560 / 23 - 10
+            steer_angle = 400 * right_grad * right_grad - 560 * right_grad + 195 
             cv2.putText(img, "turn left", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-		
     elif right_grad < 0:  # right를 잃음
         if left_grad <= -0.65:
-            #  2. 거리로 직진 보완
-            if (midpos > 320):
-                steer_angle = -5
-                cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-            elif (midpos < 270):
-                steer_angle = 5
-                cv2.putText(img, "turn left slightlyt", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-            else:
-                steer_angle = 0
-                cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+	    steer_angle = steer_at_straight(img, midpos)
         else:
-            steer_angle = -4000 / 23 * left_grad * left_grad - 8200 / 23 * left_grad - 3560 / 23
+            steer_angle = -400 * left_grad * left_grad - 560 * left_grad - 195
             cv2.putText(img, "turn right", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
     else:
-        # 2. 거리로 직진 보완
-        if (midpos > 320):
-            steer_angle = -5
-            cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-        elif (midpos < 270):
-            steer_angle = 5
-            cv2.putText(img, "turn left slightlyt", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-        else:
-            steer_angle = 0
-            cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+	steer_angle = steer_at_straight(img, midpos)
+	
+    if steer_angle > 50:
+	steer_angle = 50
+    elif steer_angle < -50:
+	steer_angle = -50
 
     return steer_angle
 
