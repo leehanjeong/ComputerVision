@@ -9,7 +9,6 @@ from collections import deque
 Width = 640
 Height = 480
 
-
 prev_lines_l = [[[62, 368, 143, 313]]]
 lines_l = [[[]]]
 prev_lines_r = [[[560, 327, 617, 359]]]
@@ -29,9 +28,10 @@ def draw_rectangle(img, x, y):
 
 
 def region_of_interest(img, vertices, color):
-    
     mask = np.zeros_like(img)
+
     cv2.fillPoly(mask, vertices, color)
+
     ROI_image = cv2.bitwise_and(img, mask)
 
     return ROI_image
@@ -39,6 +39,7 @@ def region_of_interest(img, vertices, color):
 
 def get_gradient(line):
     gradient = 0
+
     x1, y1, x2, y2 = line[0]
 
     if (x1 != x2):  # zero division
@@ -47,48 +48,41 @@ def get_gradient(line):
     return gradient
 
 
-
 def process_lines(lines, dir):
     global prev_lines_l, prev_lines_r
     real_lines = []
 
     if not (lines is None):
-        # prev_line 설정
-	    if(dir == 'left' and not (prev_lines_l is None)):
-	        prev_line = prev_lines_l[0]
-	    elif(dir == 'right' and not (prev_lines_r is None)):
-	        prev_line = prev_lines_r[0]
-	    else:
+        if (dir == 'left' and not (prev_lines_l is None)):
+            prev_line = prev_lines_l[0]
+        elif (dir == 'right' and not (prev_lines_r is None)):
+            prev_line = prev_lines_r[0]
+        else:
             prev_line = lines[0]
 
         for line in lines:
-            
             x1, y1, x2, y2 = line[0]
-            
             cur_gradient = get_gradient(line)
             prev_gradient = get_gradient(prev_line)
 
-	     # 기울기 차이로 튀는 직선 제거
-            if abs(abs(cur_gradient) - abs(prev_gradient)) < 0.3: 
-		# 좌표 차이로 튀는 직선 제거
-                if (abs(line[0][2] - prev_line[0][2]) < 35 or abs(line[0][2] - prev_line[0][2]) > 150) : 
-		    # 수평선, 수직선 제거
-                    if (abs(cur_gradient) > 0.1 and abs(cur_gradient) < 0.98):  
-                        
+            if abs(abs(cur_gradient) - abs(prev_gradient)) < 0.3:  # 기울기 차이로 튀는 직선 제거
+
+                if (abs(line[0][2] - prev_line[0][2]) < 35 or abs(
+                        line[0][2] - prev_line[0][2]) > 150):  # 좌표 차이로 튀는 직선 제거
+
+                    if (abs(cur_gradient) > 0.1 and abs(cur_gradient) < 0.98):  # 수평선, 수직선 제거
                         real_lines.append(line)
                         prev_line = line
-                        
                     else:
                         real_lines.append(prev_line)
+
                 else:
                     real_lines.append(prev_line)
+
             else:
                 real_lines.append(prev_line)
 
     return real_lines
-
-
- 
 
 
 def draw_lines(img, lines):
@@ -102,7 +96,7 @@ def draw_lines(img, lines):
     return img
 
 
-# 평소에 사용하던 좌표계와 달라서 right의 기울기가 양수, left의 기울기가 음수가 나옴.
+# 평소에 사용하던 자표계와 달라서 right의 기울기가 양수, left의 기울기가 음수가 나옴.
 def get_avg_gradient(lines):
     sum = 0
     for line in lines:
@@ -142,21 +136,16 @@ def show_gradient(img):
 # You are to find "left and right position" of road lanes
 def process_image(frame):
     global prev_lines_l, lines_l, prev_lines_r, lines_r, left_grad, right_grad
-    
-    # gray
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('gray', gray)
-
 
     # left_roi
     xl_1, yl_1 = 95, 330
-    xl_2, yl_2 = 240, 340
+    xl_2, yl_2 = 240, 350
     xl_3, yl_3 = 10, 385
-    xl_4, yl_4 = 125, 400
+    xl_4, yl_4 = 120, 415
 
     # right_roi
     xr_1, yr_1 = 420, 340
-    xr_2, yr_2 = 580, 320
+    xr_2, yr_2 = 590, 320
     xr_3, yr_3 = 540, 400
     xr_4, yr_4 = 640, 375
 
@@ -164,7 +153,7 @@ def process_image(frame):
 
     # gray
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    cv2.imshow('gray', gray)
+    # cv2.imshow('gray', gray)
 
     # cv2.calibrateCamera()
     # cv2.undistort()
@@ -178,7 +167,11 @@ def process_image(frame):
     # hsv_lane = cv2.bitwise_and(frame, frame, mask=hsv_mask)
     # cv2.imshow(hsv_lane)
 
-        # kernel = [[0.,0.,0.,0.,1.,1.,0.,0.,0.,0.],
+    # ersoe, dilate
+    kernel1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 5))
+    kernel2 = cv2.getStructuringElement(cv2.MORPH_CROSS, (5, 5))
+    kernel3 = cv2.getStructuringElement((cv2.MORPH_ELLIPSE), (5, 5))
+    # kernel = [[0.,0.,0.,0.,1.,1.,0.,0.,0.,0.],
     #           [0.,0.,0.,1.,1.,1.,1.,0.,0.,0.],
     #           [0.,0.,1.,1.,1.,1.,1.,1.,0.,0.],
     #           [0.,1.,1.,1.,1.,1.,1.,1.,1.,0.],
@@ -189,48 +182,42 @@ def process_image(frame):
     #           [0.,0.,0.,1.,1.,1.,1.,0.,0.,0.],
     #           [0.,0.,0.,0.,1.,1.,0.,0.,0.,0.]]
     # kernel = np.array(kernel)
-    
-    # erosion_img = cv2.erode(erosion_img, kernel, iterations=1)
-    # cv2.imshow('erose2', erosion_img)
-    # top_hat = gray - erosion_img
-    # cv2.imshow('top-hat', top_hat)
-    # bottom_hat = erosion_img - gray
-    # cv2.imshow('bottom-hat', bottom_hat)
-   
-    # ersoe, dilate  
-    kernel1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
-    kernel2 = cv2.getStructuringElement(cv2.MORPH_CROSS, (5,5))
-    kernel3 = cv2.getStructuringElement((cv2.MORPH_ELLIPSE),(5,5))
 
     erosion_img1 = cv2.erode(gray, kernel1, iterations=1)
+    # cv2.imshow('erose 1', erosion_img1)
+    # # erosion_img = cv2.erode(erosion_img, kernel, iterations=1)
+    # # cv2.imshow('erose2', erosion_img)
+    # # top_hat = gray - erosion_img
+    # # cv2.imshow('top-hat', top_hat)
+    # # bottom_hat = erosion_img - gray
+    # # cv2.imshow('bottom-hat', bottom_hat)
     dilation_img1 = cv2.dilate(erosion_img1, kernel1, iterations=1)
+    # cv2.imshow('dialate 1', dilation_img1)
     lane_img1 = gray - dilation_img1
-    cv2.imshow('erose 1', erosion_img1)
-    cv2.imshow('dialate 1', dilation_img1)
-    cv2.imshow('gray - diate 1', lane_img1)
+    # cv2.imshow('gray - diate 1', lane_img1)
 
-    erosion_img2 = cv2.erode(gray, kernel2, iterations=1)
-    dilation_img2 = cv2.dilate(erosion_img2, kernel2, iterations=1)   
-    lane_img2 = gray - dilation_img2
-    cv2.imshow('erose 2', erosion_img2)
-    cv2.imshow('dialat 2', dilation_img2)
-    cv2.imshow('gray - diate 2', lane_img2)
+    # erosion_img2 = cv2.erode(gray, kernel2, iterations=1)
+    # cv2.imshow('erose 2', erosion_img2)
+    # dilation_img2 = cv2.dilate(erosion_img2, kernel2, iterations=1)
+    # cv2.imshow('dialat 2', dilation_img2)
+    # lane_img2 = gray - dilation_img2
+    # cv2.imshow('gray - diate 2', lane_img2)
 
-    erosion_img3 = cv2.erode(gray, kernel3, iterations=1)  
-    dilation_img3 = cv2.dilate(erosion_img3, kernel3, iterations=1)
-    lane_img3 = gray - dilation_img3
-    cv2.imshow('erose 3', erosion_img3)
-    cv2.imshow('dialate 3', dilation_img3)
-    cv2.imshow('gray - diate 3', lane_img3)
+    # erosion_img3 = cv2.erode(gray, kernel3, iterations=1)
+    # cv2.imshow('erose 3', erosion_img3)
+    # dilation_img3 = cv2.dilate(erosion_img3, kernel3, iterations=1)
+    # cv2.imshow('dialate 3', dilation_img3)
+    # lane_img3 = gray - dilation_img3
+    # cv2.imshow('gray - diate 3', lane_img3)
 
-    # blur 
-    kernel_size = 5  
-    blur = cv2.GaussianBlur(lane_img2, (kernel_size, kernel_size), 0)
-    cv2.imshow('blur', blur)
+    # blur (cv2.bilateralFilter도 써보기)
+    kernel_size = 5  # 3은 너무 블러처리 덜 되고(-> 중앙선 잘 잡음), 7은 너무 많이돼서 차선도 가끔 잃음
+    blur = cv2.GaussianBlur(lane_img1, (kernel_size, kernel_size), 0)
+    # cv2.imshow('blur', blur)
 
     # canny
-    low_threshold = 60 
-    high_threshold = 80  
+    low_threshold = 60  # 60까지 조절해가며 최적 찾기
+    high_threshold = 80  # 얘도 너무 높으면 벽쪽 선도 인식함
     canny_left = cv2.Canny(np.uint8(blur), low_threshold, high_threshold)
     canny_right = canny_left.copy()
 
@@ -239,13 +226,13 @@ def process_image(frame):
     left_roi = region_of_interest(canny_left, vertices_left, 255)
     vertices_right = np.array([[(xr_1, yr_1), (xr_2, yr_2), (xr_4, yr_4), (xr_3, yr_3)]], dtype=np.int32)
     right_roi = region_of_interest(canny_right, vertices_right, 255)
-    
-    cv2.imshow("left_roi", left_roi)
-    cv2.imshow("right_roi", right_roi)
+    # cv2.imshow("left_roi", left_roi)
+    # cv2.imshow("right_roi", right_roi)
 
-#################################################################################################
+    #################################################################################################
     # HoughLinesP
     lines_l = cv2.HoughLinesP(left_roi, 1, math.pi / 180, 35, 2, 15)  # 인자 조절
+
     lines_r = cv2.HoughLinesP(right_roi, 1, math.pi / 180, 35, 2, 15)
 
     # process lines
@@ -254,16 +241,21 @@ def process_image(frame):
 
     # line 검출이 안 된 경우
     if (not lines_l) and (lines_r):
-        lines_l = lines_r 
+        lines_l = lines_r  # 좋은 방법인듯. 검출을 못하면(곡선구간이라. 대부분 반대쪽 선은 있음.) 반대쪽의 이전 선(왜냐하면 반대쪽의 현재 선이 검출 안될 수 있음)로 대체
     elif (not lines_r) and (lines_l):
         lines_r = lines_l
     elif (not lines_l) and (not lines_r):
         lines_l = prev_lines_l
         lines_r = prev_lines_r
 
+    # 아직도 중앙선 잡는 경우 처리
+    # if (abs(lines_l[0][0][2] - prev_lines_l[0][0][2]) > 35) and (abs(lines_l[0][0][2] - prev_lines_l[0][0][2]) < 380):
+    #   lines_l = prev_lines_l
+    # if (abs(lines_r[0][0][2] - prev_lines_r[0][0][2]) > 35) and (abs(lines_r[0][0][2] - prev_lines_r[0][0][2]) < 380):
+    #   lines_r = prev_lines_r
+
     prev_lines_l = lines_l
     prev_lines_r = lines_r
-
 
     # draw hough lines
     draw_lines(src, lines_l)
@@ -304,14 +296,13 @@ def process_image(frame):
     left_line = []
     right_line = []
 
+    # find average line
+    left_line = get_avg_line(lines_l)
+    right_line = get_avg_line(lines_r)
 
     # find average gradient
     left_grad = get_avg_gradient(lines_l)
     right_grad = get_avg_gradient(lines_r)
-
-    # find average line
-    left_line = get_avg_line(lines_l)
-    right_line = get_avg_line(lines_r)
 
     # draw rectangle
     lpos = ((left_line[0] + left_line[2]) / 2, (left_line[1] + left_line[3]) / 2)
@@ -321,31 +312,30 @@ def process_image(frame):
     draw_rectangle(src, rpos[0], rpos[1])
 
     # draw blue line
-    cv2.line(src, (left_line[0] + 200, left_line[1] + int(left_grad * 200)), (left_line[2], left_line[3]), 
-	     (255, 0, 0), 3)
+    cv2.line(src, (left_line[0] + 200, left_line[1] + int(left_grad * 200)), (left_line[2], left_line[3]), (255, 0, 0),
+             3)
     cv2.line(src, (right_line[0] - 200, right_line[1] - int(right_grad * 200)), (right_line[2], right_line[3]),
              (255, 0, 0), 3)
-    # cv2.imshow('src', src)
 
     ######### 대표 직선이랑 lpos, rpos 구하기 위해 가변적 roi를 써야할 것 같음, 지금은 그렇게 안 하지만 대회해서는 상황별로 roi 다르게 잡으면 좋을 것 같음. ##########
 
     # check ROI
-    cv2.circle(src, (xl_1, yl_1), 5, (0, 0, 255), -1)
-    cv2.circle(src, (xl_2, yl_2), 5, (0, 0, 255), -1)
-    cv2.circle(src, (xl_3, yl_3), 5, (0, 0, 255), -1)
-    cv2.circle(src, (xl_4, yl_4), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xl_1, yl_1), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xl_2, yl_2), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xl_3, yl_3), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xl_4, yl_4), 5, (0, 0, 255), -1)
 
-    cv2.circle(src, (xr_1, yr_1), 5, (0, 0, 255), -1)
-    cv2.circle(src, (xr_2, yr_2), 5, (0, 0, 255), -1)
-    cv2.circle(src, (xr_3, yr_3), 5, (0, 0, 255), -1)
-    cv2.circle(src, (xr_4, yr_4), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xr_1, yr_1), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xr_2, yr_2), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xr_3, yr_3), 5, (0, 0, 255), -1)
+    # cv2.circle(src, (xr_4, yr_4), 5, (0, 0, 255), -1)
 
-    #cv2.imshow("src", src)
+    # cv2.imshow("src", src)
 
     return (lpos, rpos), src
 
-def steer_at_straight(img, midpos):
 
+def steer_at_straight(img, midpos):
     if (midpos > 320):
         steer_angle = -5
         cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
@@ -355,8 +345,9 @@ def steer_at_straight(img, midpos):
     else:
         steer_angle = 0
         cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
-   
+
     return steer_angle
+
 
 def get_steer_angle(img, pos):
     global left_grad, right_grad, steer_angle
@@ -364,31 +355,30 @@ def get_steer_angle(img, pos):
     lpos = pos[0]
     rpos = pos[1]
     midpos = (lpos[0] + rpos[0]) / 2
-    #print(midpos)
 
-    # 1. 기울기로 조향
+    # 1. 기울기
     if (left_grad <= -0.65) and (right_grad >= 0.65):
-	# 2. 직진의 경우 거리로 보완
-	steer_angle = steer_at_straight(img, midpos)
+        # 2. 직진의 경우 거리로 보완
+        steer_angle = steer_at_straight(img, midpos)
     elif left_grad > 0:  # left를 잃음
         if right_grad >= 0.65:
-	    steer_angle = steer_at_straight(img, midpos)
+            steer_angle = steer_at_straight(img, midpos)
         else:
-            steer_angle = 400 * right_grad * right_grad - 560 * right_grad + 195 
+            steer_angle = 400 * right_grad * right_grad - 560 * right_grad + 195
             cv2.putText(img, "turn left", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
     elif right_grad < 0:  # right를 잃음
         if left_grad <= -0.65:
-	    steer_angle = steer_at_straight(img, midpos)
+            steer_angle = steer_at_straight(img, midpos)
         else:
             steer_angle = -400 * left_grad * left_grad - 560 * left_grad - 195
             cv2.putText(img, "turn right", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
     else:
-	steer_angle = steer_at_straight(img, midpos)
-	
+        steer_angle = steer_at_straight(img, midpos)
+        
     if steer_angle > 50:
-	steer_angle = 50
+        steer_angle = 50
     elif steer_angle < -50:
-	steer_angle = -50
+        steer_angle = -50
 
     return steer_angle
 
@@ -405,7 +395,7 @@ def draw_steer(image, steer_angle):
     arrow_Width = (arrow_Height * 462) / 728
 
     matrix = cv2.getRotationMatrix2D((origin_Width / 2, steer_wheel_center), (steer_angle) * 1.5, 0.7)
-    arrow_pic = cv2.warpAffine(arrow_pic, matrix, (origin_Width + 60, origin_Height))  # 어파인 변환한 결과 영상을 생성
+    arrow_pic = cv2.warpAffine(arrow_pic, matrix, (origin_Width + 60, origin_Height))  # 어파인 변환한 >결과 영상을 생성
     arrow_pic = cv2.resize(arrow_pic, dsize=(arrow_Width, arrow_Height), interpolation=cv2.INTER_AREA)
 
     gray_arrow = cv2.cvtColor(arrow_pic, cv2.COLOR_BGR2GRAY)
@@ -414,9 +404,7 @@ def draw_steer(image, steer_angle):
     arrow_roi = image[arrow_Height: Height, (Width / 2 - arrow_Width / 2): (Width / 2 + arrow_Width / 2)]
 
     arrow_roi = cv2.add(arrow_pic, arrow_roi, mask=mask)
-    # cv2.imshow('2', arrow_roi)
     res = cv2.add(arrow_roi, arrow_pic)
-    # cv2.imshow('3', res)
     image[(Height - arrow_Height): Height, (Width / 2 - arrow_Width / 2): (Width / 2 + arrow_Width / 2)] = res
 
     cv2.imshow('steer', image)
@@ -429,12 +417,13 @@ if __name__ == '__main__':
 
     while not rospy.is_shutdown():
         time1 = time.time()
+        
         ret, image = cap.read()
         pos, frame = process_image(image)  # pos = (lpos, rpos), frame은 가공된 frame
-        # show gradient
         show_gradient(frame)
         steer_angle = get_steer_angle(frame, pos)
         draw_steer(frame, steer_angle)
+        
         time2 = time.time()
         print("time:", time1 - time2)
 
