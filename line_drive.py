@@ -304,13 +304,14 @@ def process_image(frame):
     left_line = []
     right_line = []
 
-    # find average line
-    left_line = get_avg_line(lines_l)
-    right_line = get_avg_line(lines_r)
 
     # find average gradient
     left_grad = get_avg_gradient(lines_l)
     right_grad = get_avg_gradient(lines_r)
+
+    # find average line
+    left_line = get_avg_line(lines_l)
+    right_line = get_avg_line(lines_r)
 
     # draw rectangle
     lpos = ((left_line[0] + left_line[2]) / 2, (left_line[1] + left_line[3]) / 2)
