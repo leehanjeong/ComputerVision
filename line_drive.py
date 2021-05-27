@@ -184,8 +184,8 @@ def process_image(frame):
     # cv2.imshow('top-hat', top_hat)
     # bottom_hat = erosion_img - gray
     # cv2.imshow('bottom-hat', bottom_hat)
-    # ersoe, dilate
-    
+   
+    # ersoe, dilate  
     kernel1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
     kernel2 = cv2.getStructuringElement(cv2.MORPH_CROSS, (5,5))
     kernel3 = cv2.getStructuringElement((cv2.MORPH_ELLIPSE),(5,5))
