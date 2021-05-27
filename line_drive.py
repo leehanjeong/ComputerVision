@@ -254,7 +254,7 @@ def process_image(frame):
 
     # line 검출이 안 된 경우
     if (not lines_l) and (lines_r):
-        lines_l = lines_r  # 좋은 방법인듯. 검출을 못하면(곡선구간이라. 대부분 반대쪽 선은 있음.) 반대쪽의 이전 선(왜냐하면 반대쪽의 현재 선이 검출 안될 수 있음)로 대체
+        lines_l = lines_r 
     elif (not lines_r) and (lines_l):
         lines_r = lines_l
     elif (not lines_l) and (not lines_r):
