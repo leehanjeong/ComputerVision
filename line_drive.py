@@ -102,7 +102,7 @@ def draw_lines(img, lines):
     return img
 
 
-# 평소에 사용하던 자표계와 달라서 right의 기울기가 양수, left의 기울기가 음수가 나옴.
+# 평소에 사용하던 좌표계와 달라서 right의 기울기가 양수, left의 기울기가 음수가 나옴.
 def get_avg_gradient(lines):
     sum = 0
     for line in lines:
