@@ -211,7 +211,7 @@ def process_image(frame):
     cv2.imshow('dialate 3', dilation_img3)
     cv2.imshow('gray - diate 3', lane_img3)
 
-    # blur (
+    # blur 
     kernel_size = 5  
     blur = cv2.GaussianBlur(lane_img2, (kernel_size, kernel_size), 0)
     cv2.imshow('blur', blur)
