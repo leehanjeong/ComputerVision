@@ -68,9 +68,12 @@ def process_lines(lines, dir):
             cur_gradient = get_gradient(line)
             prev_gradient = get_gradient(prev_line)
 
-            if abs(abs(cur_gradient) - abs(prev_gradient)) < 0.3:  # 기울기 차이로 튀는 직선 제거
-                if (abs(line[0][2] - prev_line[0][2]) < 35 or abs(line[0][2] - prev_line[0][2]) > 150) :  # 좌표 차이로 튀는 직선 제거
-                    if (abs(cur_gradient) > 0.1 and abs(cur_gradient) < 0.98):  # 수평선, 수직선 제거
+	     # 기울기 차이로 튀는 직선 제거
+            if abs(abs(cur_gradient) - abs(prev_gradient)) < 0.3: 
+		# 좌표 차이로 튀는 직선 제거
+                if (abs(line[0][2] - prev_line[0][2]) < 35 or abs(line[0][2] - prev_line[0][2]) > 150) : 
+		    # 수평선, 수직선 제거
+                    if (abs(cur_gradient) > 0.1 and abs(cur_gradient) < 0.98):  
                         
                         real_lines.append(line)
                         prev_line = line
