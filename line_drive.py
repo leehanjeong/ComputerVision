@@ -29,10 +29,9 @@ def draw_rectangle(img, x, y):
 
 
 def region_of_interest(img, vertices, color):
+    
     mask = np.zeros_like(img)
-
     cv2.fillPoly(mask, vertices, color)
-
     ROI_image = cv2.bitwise_and(img, mask)
 
     return ROI_image
@@ -227,8 +226,8 @@ def process_image(frame):
     left_roi = region_of_interest(canny_left, vertices_left, 255)
     vertices_right = np.array([[(xr_1, yr_1), (xr_2, yr_2), (xr_4, yr_4), (xr_3, yr_3)]], dtype=np.int32)
     right_roi = region_of_interest(canny_right, vertices_right, 255)
-    #cv2.imshow("left_roi", left_roi)
-    #cv2.imshow("right_roi", right_roi)
+    cv2.imshow("left_roi", left_roi)
+    cv2.imshow("right_roi", right_roi)
 
 #################################################################################################
     # HoughLinesP
