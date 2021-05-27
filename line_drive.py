@@ -166,11 +166,7 @@ def process_image(frame):
     # hsv_lane = cv2.bitwise_and(frame, frame, mask=hsv_mask)
     # cv2.imshow(hsv_lane)
 
-    # ersoe, dilate
-    kernel1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
-    kernel2 = cv2.getStructuringElement(cv2.MORPH_CROSS, (5,5))
-    kernel3 = cv2.getStructuringElement((cv2.MORPH_ELLIPSE),(5,5))
-    # kernel = [[0.,0.,0.,0.,1.,1.,0.,0.,0.,0.],
+        # kernel = [[0.,0.,0.,0.,1.,1.,0.,0.,0.,0.],
     #           [0.,0.,0.,1.,1.,1.,1.,0.,0.,0.],
     #           [0.,0.,1.,1.,1.,1.,1.,1.,0.,0.],
     #           [0.,1.,1.,1.,1.,1.,1.,1.,1.,0.],
@@ -181,32 +177,38 @@ def process_image(frame):
     #           [0.,0.,0.,1.,1.,1.,1.,0.,0.,0.],
     #           [0.,0.,0.,0.,1.,1.,0.,0.,0.,0.]]
     # kernel = np.array(kernel)
-
-    erosion_img1 = cv2.erode(gray, kernel1, iterations=1)
-    cv2.imshow('erose 1', erosion_img1)
+    
     # erosion_img = cv2.erode(erosion_img, kernel, iterations=1)
     # cv2.imshow('erose2', erosion_img)
     # top_hat = gray - erosion_img
     # cv2.imshow('top-hat', top_hat)
     # bottom_hat = erosion_img - gray
     # cv2.imshow('bottom-hat', bottom_hat)
+    # ersoe, dilate
+    
+    kernel1 = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))
+    kernel2 = cv2.getStructuringElement(cv2.MORPH_CROSS, (5,5))
+    kernel3 = cv2.getStructuringElement((cv2.MORPH_ELLIPSE),(5,5))
+
+    erosion_img1 = cv2.erode(gray, kernel1, iterations=1)
     dilation_img1 = cv2.dilate(erosion_img1, kernel1, iterations=1)
-    cv2.imshow('dialate 1', dilation_img1)
     lane_img1 = gray - dilation_img1
+    cv2.imshow('erose 1', erosion_img1)
+    cv2.imshow('dialate 1', dilation_img1)
     cv2.imshow('gray - diate 1', lane_img1)
 
     erosion_img2 = cv2.erode(gray, kernel2, iterations=1)
-    cv2.imshow('erose 2', erosion_img2)
-    dilation_img2 = cv2.dilate(erosion_img2, kernel2, iterations=1)
-    cv2.imshow('dialat 2', dilation_img2)
+    dilation_img2 = cv2.dilate(erosion_img2, kernel2, iterations=1)   
     lane_img2 = gray - dilation_img2
+    cv2.imshow('erose 2', erosion_img2)
+    cv2.imshow('dialat 2', dilation_img2)
     cv2.imshow('gray - diate 2', lane_img2)
 
-    erosion_img3 = cv2.erode(gray, kernel3, iterations=1)
-    cv2.imshow('erose 3', erosion_img3)
+    erosion_img3 = cv2.erode(gray, kernel3, iterations=1)  
     dilation_img3 = cv2.dilate(erosion_img3, kernel3, iterations=1)
-    cv2.imshow('dialate 3', dilation_img3)
     lane_img3 = gray - dilation_img3
+    cv2.imshow('erose 3', erosion_img3)
+    cv2.imshow('dialate 3', dilation_img3)
     cv2.imshow('gray - diate 3', lane_img3)
 
     # blur (cv2.bilateralFilter도 써보기)
