@@ -47,20 +47,31 @@ def get_gradient(line):
     return gradient
 
 
-def process_lines(lines):
+
+def process_lines(lines, dir):
+    global prev_lines_l, prev_lines_r
     real_lines = []
 
     if not (lines is None):
-        prev_line = lines[0]
+        # prev_line 설정
+	    if(dir == 'left' and not (prev_lines_l is None)):
+	        prev_line = prev_lines_l[0]
+	    elif(dir == 'right' and not (prev_lines_r is None)):
+	        prev_line = prev_lines_r[0]
+	    else:
+            prev_line = lines[0]
 
         for line in lines:
+            
             x1, y1, x2, y2 = line[0]
+            
             cur_gradient = get_gradient(line)
             prev_gradient = get_gradient(prev_line)
 
-            if abs(cur_gradient - prev_gradient) < 0.1:  # 기울기 차이로 튀는 직선 제거
-                if abs(line[0][2] - prev_line[0][2]) < 15:  # 좌표 차이로 튀는 직선 제거
-                    if abs(cur_gradient) > 0.12 and abs(cur_gradient) < 0.98:  # 수평선, 수직선 제거
+            if abs(abs(cur_gradient) - abs(prev_gradient)) < 0.3:  # 기울기 차이로 튀는 직선 제거
+                if (abs(line[0][2] - prev_line[0][2]) < 35 or abs(line[0][2] - prev_line[0][2]) > 150) :  # 좌표 차이로 튀는 직선 제거
+                    if (abs(cur_gradient) > 0.1 and abs(cur_gradient) < 0.98):  # 수평선, 수직선 제거
+                        
                         real_lines.append(line)
                         prev_line = line
                         
@@ -72,6 +83,9 @@ def process_lines(lines):
                 real_lines.append(prev_line)
 
     return real_lines
+
+
+ 
 
 
 def draw_lines(img, lines):
@@ -232,8 +246,8 @@ def process_image(frame):
     lines_r = cv2.HoughLinesP(right_roi, 1, math.pi / 180, 35, 2, 15)
 
     # process lines
-    lines_l = process_lines(lines_l)
-    lines_r = process_lines(lines_r')
+    lines_l = process_lines(lines_l, 'left')
+    lines_r = process_lines(lines_r, 'right')
 
     # line 검출이 안 된 경우
     if (not lines_l) and (lines_r):
