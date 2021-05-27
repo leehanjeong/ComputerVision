@@ -211,10 +211,10 @@ def process_image(frame):
     cv2.imshow('dialate 3', dilation_img3)
     cv2.imshow('gray - diate 3', lane_img3)
 
-    # blur (cv2.bilateralFilter도 써보기)
-    kernel_size = 5  # 3은 너무 블러처리 덜 되고(-> 중앙선 잘 잡음), 7은 너무 많이돼서 차선도 가끔 잃음
+    # blur (
+    kernel_size = 5  
     blur = cv2.GaussianBlur(lane_img2, (kernel_size, kernel_size), 0)
-    #cv2.imshow('blur', blur)
+    cv2.imshow('blur', blur)
 
     # canny
     low_threshold = 60  # 60까지 조절해가며 최적 찾기
