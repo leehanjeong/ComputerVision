@@ -130,6 +130,11 @@ def show_gradient(img):
 # You are to find "left and right position" of road lanes
 def process_image(frame):
     global prev_lines_l, lines_l, prev_lines_r, lines_r, left_grad, right_grad
+    
+    # gray
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    cv2.imshow('gray', gray)
+
 
     # left_roi
     xl_1, yl_1 = 95, 330
