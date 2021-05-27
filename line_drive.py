@@ -321,8 +321,8 @@ def process_image(frame):
     draw_rectangle(src, rpos[0], rpos[1])
 
     # draw blue line
-    cv2.line(src, (left_line[0] + 200, left_line[1] + int(left_grad * 200)), (left_line[2], left_line[3]), (255, 0, 0),
-             3)
+    cv2.line(src, (left_line[0] + 200, left_line[1] + int(left_grad * 200)), (left_line[2], left_line[3]), 
+	     (255, 0, 0), 3)
     cv2.line(src, (right_line[0] - 200, right_line[1] - int(right_grad * 200)), (right_line[2], right_line[3]),
              (255, 0, 0), 3)
     # cv2.imshow('src', src)
