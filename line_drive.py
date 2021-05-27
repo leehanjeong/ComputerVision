@@ -433,7 +433,15 @@ if __name__ == '__main__':
     time.sleep(3)
 
     while not rospy.is_shutdown():
+        time1 = time.time()
         ret, image = cap.read()
+        pos, frame = process_image(image)  # pos = (lpos, rpos), frame은 가공된 frame
+        # show gradient
+        show_gradient(frame)
+        steer_angle = get_steer_angle(frame, pos)
+        draw_steer(frame, steer_angle)
+        time2 = time.time()
+        print("time:", time1 - time2)
 
         if cv2.waitKey(3) & 0xFF == ord('q'):
             break
