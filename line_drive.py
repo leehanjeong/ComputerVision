@@ -433,7 +433,6 @@ if __name__ == '__main__':
     time.sleep(3)
 
     while not rospy.is_shutdown():
-        time1 = time.time()
         ret, image = cap.read()
 
         if cv2.waitKey(3) & 0xFF == ord('q'):
