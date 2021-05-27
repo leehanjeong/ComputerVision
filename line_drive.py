@@ -405,7 +405,7 @@ def draw_steer(image, steer_angle):
     arrow_Width = (arrow_Height * 462) / 728
 
     matrix = cv2.getRotationMatrix2D((origin_Width / 2, steer_wheel_center), (steer_angle) * 1.5, 0.7)
-    arrow_pic = cv2.warpAffine(arrow_pic, matrix, (origin_Width + 60, origin_Height))  # 어파인 변환한 >결과 영상을 생성
+    arrow_pic = cv2.warpAffine(arrow_pic, matrix, (origin_Width + 60, origin_Height))  # 어파인 변환한 결과 영상을 생성
     arrow_pic = cv2.resize(arrow_pic, dsize=(arrow_Width, arrow_Height), interpolation=cv2.INTER_AREA)
 
     gray_arrow = cv2.cvtColor(arrow_pic, cv2.COLOR_BGR2GRAY)
