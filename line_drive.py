@@ -351,17 +351,16 @@ def get_steer_angle(img, pos):
     lpos = pos[0]
     rpos = pos[1]
     midpos = (lpos[0] + rpos[0]) / 2
-    print(midpos)
 
     # 1. 기울기
     if (left_grad <= -0.65) and (right_grad >= 0.65):
         #  2. 거리로 직진 보완
         if (midpos > 320):
             steer_angle = -5
-            cv2.putText(img, "turn slightly right", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+            cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
         elif (midpos < 270):
             steer_angle = 5
-            cv2.putText(img, "turn slightly left", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+            cv2.putText(img, "turn left slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
         else:
             steer_angle = 0
             cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
@@ -371,25 +370,26 @@ def get_steer_angle(img, pos):
             #  2. 거리로 직진 보완
             if (midpos > 320):
                 steer_angle = -5
-                cv2.putText(img, "turn slightly right", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+                cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
             elif (midpos < 270):
                 steer_angle = 5
-                cv2.putText(img, "turn slightly left", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+                cv2.putText(img, "turn left slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
             else:
                 steer_angle = 0
                 cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
         else:
             steer_angle = 4000 / 23 * right_grad * right_grad - 8200 / 23 * right_grad + 3560 / 23 - 10
             cv2.putText(img, "turn left", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+		
     elif right_grad < 0:  # right를 잃음
         if left_grad <= -0.65:
             #  2. 거리로 직진 보완
             if (midpos > 320):
                 steer_angle = -5
-                cv2.putText(img, "turn slightly right", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+                cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
             elif (midpos < 270):
                 steer_angle = 5
-                cv2.putText(img, "turn slightly left", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+                cv2.putText(img, "turn left slightlyt", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
             else:
                 steer_angle = 0
                 cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
@@ -400,10 +400,10 @@ def get_steer_angle(img, pos):
         # 2. 거리로 직진 보완
         if (midpos > 320):
             steer_angle = -5
-            cv2.putText(img, "turn slightly right", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+            cv2.putText(img, "turn right slightly", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
         elif (midpos < 270):
             steer_angle = 5
-            cv2.putText(img, "turn slightly left", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
+            cv2.putText(img, "turn left slightlyt", (200, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
         else:
             steer_angle = 0
             cv2.putText(img, "go straight", (250, 80), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
