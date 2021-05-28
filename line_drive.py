@@ -262,35 +262,31 @@ def process_image(frame):
     draw_lines(src, lines_r)
 
     # find rectangle area_1 - use pixel threshold
-    # lpos, rpos = 135, 550
-    # roi_mid_row = 315
-    # roi_mid_col = 335
-    # start_l, start_r = 290, 380 # 조절
-    # ##cv2.circle(src, (start_l, 315),5, (255, 0, 0), -1)
-    # ##cv2.circle(src, (start_r, 315),5, (255, 0, 0), -1)
-    # end_l, end_r = xl_2, xr_1
-    # area_len = 10 # 픽셀 수 확인 영역 가로,세로 길이
-    # pixel_cnt_threshold = area_len * area_len * 0.2
-    # prev_lpos, prev_rpos = lpos, rpos # 직사각형 놓친 경우 대비
+    lpos, rpos = 135, 550
+    roi_mid_row = 315
+    roi_mid_col = 335
+    start_l, start_r = 290, 380 # 조절
+    end_l, end_r = xl_2, xr_1
+    area_len = 10 # 픽셀 수 확인 영역 가로,세로 길이
+    pixel_cnt_threshold = area_len * area_len * 0.2
+    prev_lpos, prev_rpos = lpos, rpos # 직사각형 놓친 경우 대비
 
-    # for l in range(start_l, end_l, -1):
-    #     area = left_roi[roi_mid_row : roi_mid_row + area_len, l : l + area_len] # 행, 열
-    #     if cv2.countNonZero(area) > pixel_cnt_threshold:
-    #         lpos = l
+    for l in range(start_l, end_l, -1):
+        area = left_roi[roi_mid_row : roi_mid_row + area_len, l : l + area_len] # 행, 열
+        if cv2.countNonZero(area) > pixel_cnt_threshold:
+            lpos = l
 
-    # for r in range(start_r, end_r):
-    #     area = right_roi[roi_mid_row : roi_mid_row + area_len, r : r + area_len] # 행, 열
-    #     if cv2.countNonZero(area) > pixel_cnt_threshold:
-    #         rpos = r
-    # ##print("l:", lpos)
-    # ##print("r:", rpos)
+    for r in range(start_r, end_r):
+        area = right_roi[roi_mid_row : roi_mid_row + area_len, r : r + area_len] # 행, 열
+        if cv2.countNonZero(area) > pixel_cnt_threshold:
+            rpos = r
 
-    # if abs(prev_lpos - lpos) > 100: # 중간선 잡기 방지
-    #     lpos = prev_lpos
-    # if abs(prev_rpos - rpos) > 100:
-    #     rpos = prev_rpos
+    if abs(prev_lpos - lpos) > 100: # 중간선 잡기 방지
+        lpos = prev_lpos
+    if abs(prev_rpos - rpos) > 100:
+        rpos = prev_rpos
 
-    # dst = draw_rectangle(dst, lpos, rpos, offset=Offset)
+    dst = draw_rectangle(dst, lpos, rpos, offset=Offset)
 
     # find rectangle area_2 - use lines
     left_line = []
